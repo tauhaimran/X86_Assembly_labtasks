@@ -1,0 +1,90 @@
+; Irvine Template - by Raggy Gaggy
+Include irvine32.inc
+include macros.inc
+
+.386
+.model flat, stdcall
+.stack 4096
+ExitProcess PROTO, dwExitCode:DWORD
+
+.data
+
+ point struct 
+ x db 0
+ y db 0
+ point ends 
+
+ circle point  <0,0>
+ radius db 0 
+
+ val = 10 
+ num = 0
+
+.code
+
+
+main proc
+mov eax,0
+mov ebx,0
+mov ecx,0
+mov cl, 10
+
+.while cl > 0
+	mov eax,0
+		
+		mov al,cl
+		mov bl,al
+		and bl,1
+
+		.if bl > 0
+			
+		call WriteDec	
+			mov al, ','
+		call WriteChar
+		.endif
+		
+		dec cl
+	.endw 
+
+call Crlf
+
+mov eax,0
+mov ecx,0
+mov cl, 10
+
+	
+	WHILE val GT 0 
+	mov eax,0
+		mov al,val
+		mov bl,al
+		and bl,1
+	
+		
+		
+			.IF ( bl == num)
+				call WriteDec
+				mov al, ','
+				call WriteChar	
+				
+				.else
+				mov al,'x'
+					call WriteChar
+			mov al, ','
+			call WriteChar	
+
+			.ENDIF
+
+	val = val -1
+	ENDM
+	
+	
+
+
+invoke ExitProcess, 0
+main endp
+;make functions proc implementations here...
+
+end main
+
+
+

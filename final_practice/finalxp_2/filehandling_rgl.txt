@@ -1,0 +1,100 @@
+; Irvine Template - by Raggy Gaggy
+Include irvine32.inc
+include macros.inc
+
+.386
+.model flat, stdcall
+.stack 4096
+ExitProcess PROTO, dwExitCode:DWORD
+
+.data
+	
+;//make data variables here...
+FILEHANDLE dword ?
+
+	filename db "text.txt" , 0
+	data db 255 dup(0)
+	data2 db 255 dup(0)
+	buffer db 310 dup(0)
+
+	user_name db 69 dup(0),0
+	value db  0 
+	buffsize dword 0
+	flag db 0
+	;prompts..
+	p1 db "Hi there , enter you name : " ,0
+
+.code
+
+main proc
+;main proc calls and simulatations...
+
+mWrite "ENTER DATA 1 : "
+
+mov edx, offset data
+mov ecx,255
+call ReadString
+mov value,al
+add buffsize,eax
+
+	mov edx, offset filename
+	call CreateOutputFile
+	mov FILEHANDLE,eax
+
+	mov edx, offset data
+	mov ecx,0
+	mov cl,value
+		call WriteToFile
+	
+mWrite ".data1 inserted into file",10
+call Crlf
+
+mWrite "ENTER DATA 2 : "
+mov edx, offset data2
+mov ecx,255
+call ReadString
+mov value,al
+add buffsize,eax
+	
+	mov eax , FILEHANDLE			
+	mov edx, offset data2
+	mov ecx,0
+	mov cl,value
+		call WriteToFile
+
+	
+mWrite ".data2 inserted into file"
+call Crlf
+
+
+mov edx,offset buffer
+call WriteString
+
+mov eax,FILEHANDLE
+call CloseFile
+
+mWrite " >> all data from file text.txt :: "
+
+mov edx, offset filename
+call OpenInputFile
+mov FILEHANDLE , eax
+	
+	mov  eax,FILEHANDLE
+	mov edx, offset buffer
+	mov ecx, buffsize
+	call ReadFromFile
+
+	mov edx,offset buffer
+	mov ecx, buffsize
+call WriteString
+
+
+call Crlf
+call WaitMsg
+mov eax,FILEHANDLE
+call CloseFile
+
+invoke ExitProcess, 0
+main endp
+;make functions proc implementations here...
+end main

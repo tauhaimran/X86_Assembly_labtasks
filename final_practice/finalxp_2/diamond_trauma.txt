@@ -1,0 +1,302 @@
+; Irvine Template - by Raggy Gaggy
+Include irvine32.inc
+include macros.inc
+
+.386
+.model flat, stdcall
+.stack 4096
+ExitProcess PROTO, dwExitCode:DWORD
+
+BUFFER = 5000
+
+.data
+	
+;//make data variables here...
+FILEHANDLE dword ?
+
+	filename db "text.txt" , 0
+	data db 255 dup(0)
+	user_name db 69 dup(0),0
+	value db  0 
+	flag db 0
+	;prompts..
+	p1 db "Hi there , enter you name : " ,0
+
+.code
+
+main proc
+;main proc calls and simulatations...
+call Clrscr
+	mov edx,0
+	mov dl,10
+	mov dh,15
+	call Gotoxy
+
+	mov edx, offset p1
+	call WriteString
+
+	mov edx,offset user_name
+	mov ecx,69
+	call ReadString
+
+call Clrscr
+
+mov edx,0
+	mov dl,3
+	mov dh,1
+	call Gotoxy
+
+mov eax, lightMagenta
+call SetTextColor
+	mWrite "user : "
+
+mov eax,green
+call SetTextColor
+	
+	mov edx, offset user_name
+	call WriteString
+
+mov edx,0
+	mov dl,5
+	mov dh,3
+	call Gotoxy
+
+mov eax,blue
+call SetTextColor
+	
+
+mWrite "Enter a number for a shape (1-6): "
+
+mov eax,green
+call SetTextColor
+	
+mov eax,0
+
+call ReadDec
+
+call IsDigit
+jz draw
+
+cmp eax,6
+jg input_check
+cmp eax,0
+jle input_check
+
+jmp draw
+
+	input_check:
+	mWrite "Invalid entry , retry : "
+	call ReadDec
+		cmp eax,6
+		jg input_check
+		cmp eax,0
+		jle input_check
+
+draw:
+add al,al
+mov value,al
+
+call Clrscr
+
+
+push ebp
+	mov al,value
+		mov dh,2
+		mov dl,2
+push ax
+call upper_diamond
+pop ebp
+
+dec dh
+
+push ebp
+mov eax,0
+inc ax
+push ax
+call lower_diamond
+pop ebp
+
+invoke ExitProcess, 0
+main endp
+
+;make functions proc implementations here...
+upper_diamond proc
+
+cmp ax,0
+je draw_line
+dec al
+push ax
+call upper_diamond
+
+draw_line:
+push ebp
+
+	mov ebp,esp
+	mov ax,word ptr [ebp+8]
+	mov bl,al
+	mov cl,value
+	sub cl,al
+		
+	cmp cl,0
+	je spare_me1
+	;4 - 8 
+	;3 - 6
+			; 1 2 3 4*5 6 7 8
+			; 1 2 3*4*5*6 7 8
+			; 1 2*3*4*5*6*7 8
+			; 1*2*3*4*5*6*7*8
+			
+	left:
+	mov al,' '
+	call WriteChar
+	inc dl
+	call Gotoxy
+	loop left
+
+	;mov bl,value
+	;sub bl,cl
+	mov cl,bl
+	
+	add cl,cl
+	
+	;cmp cl,36
+	;	jg spare_me1
+
+	cmp cl,0
+	je spare_me1
+	
+	dec cl
+
+	stars:
+	call diamond_color
+			mov al,'*'
+			call WriteChar	
+	inc dl
+	call Gotoxy
+	loop stars
+
+	mov cl,value
+	sub cl,bl
+	
+	cmp cl,0
+	je spare_me1
+	
+	
+	right:
+	mov al,' '
+	call WriteChar
+	inc dl
+	call Gotoxy
+	loop right
+
+call Crlf
+spare_me1:
+mov dl,2
+inc dh
+	call Gotoxy
+pop ebp
+ret 2
+upper_diamond endp
+
+;//------------
+lower_diamond proc
+
+mov bl,al
+inc bl
+inc bl
+cmp bl,value
+je draw_line
+inc al
+push ax
+call lower_diamond
+
+draw_line:
+push ebp
+
+	mov ebp,esp
+	mov ax,word ptr [ebp+8]
+	mov bl,al
+	mov cl,value
+	sub cl,al
+		
+	cmp cl,0
+	je spare_me1
+	;4 - 8 
+	;3 - 6
+			; FOR THE NUM = 4
+			; 1 2 3 4*5 6 7 8 //1
+			; 1 2 3*4*5*6 7 8 //2
+			; 1 2*3*4*5*6*7 8 //3
+			; 1*2*3*4*5*6*7*8 //4
+			
+	left:
+	mov al,' '
+	call WriteChar
+	inc dl
+	call Gotoxy
+	loop left
+
+	;mov bl,value
+	;sub bl,cl
+	mov cl,bl
+	
+	add cl,cl
+	
+	;cmp cl,36
+	;	jg spare_me1
+
+	cmp cl,0
+	je spare_me1
+	
+	dec cl
+
+	stars:
+	call diamond_color
+			mov al,'*'
+			call WriteChar	
+	inc dl
+	call Gotoxy
+	loop stars
+
+	mov cl,value
+	sub cl,bl
+	
+	cmp cl,0
+	je spare_me1
+	
+	
+	right:
+	mov al,' '
+	call WriteChar
+	inc dl
+	call Gotoxy
+	loop right
+
+call Crlf
+spare_me1:
+mov dl,2
+inc dh
+	call Gotoxy
+pop ebp
+ret 2
+lower_diamond endp
+
+
+;//-------------
+diamond_color proc
+	
+	cmp flag,0
+	je set_gold
+	
+mov eax,lightCyan
+call SetTextColor
+inc flag
+ret
+
+set_gold:
+mov eax,white
+call SetTextColor
+dec flag
+ret
+diamond_color endp
+end main

@@ -1,0 +1,3 @@
+﻿  Assembling Source.asm...
+C:\Irvine\irvine\SmallWin.inc(11): warning A4011: multiple .MODEL directives found : .MODEL ignored
+  finalxp_2.vcxproj -> G:\Tauha - FAST\t.smstr3\COAL_LAB\final_practice\finalxp_2\Debug\finalxp_2.exe

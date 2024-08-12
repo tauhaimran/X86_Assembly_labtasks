@@ -1,0 +1,169 @@
+
+; Irvine Template - by Raggy Gaggy
+Include irvine32.inc
+include macros.inc
+
+.386
+.model flat, stdcall
+.stack 4096
+ExitProcess PROTO, dwExitCode:DWORD
+
+.data
+
+arr db 1,2,3,4,5
+
+dig1 word 0
+dig3 word 0
+dig2 word 0
+
+ point struct 
+	 x db 0
+	 y db 0
+ point ends 
+
+ circle point  <0,0>
+ radius db 0 
+
+ val = 10 
+ num = 0
+
+.code
+
+
+main proc
+mov eax,0
+mov ebx,0
+mov ecx,0
+mov cl, 10
+
+.while cl > 0
+	mov eax,0
+		
+		mov al,cl
+		mov bl,al
+		and bl,1
+
+		.if bl > 0
+			
+		call WriteDec	
+			mov al, ','
+		call WriteChar
+		.endif
+		
+		dec cl
+	.endw 
+
+call Crlf
+
+mov eax,0
+mov ecx,0
+mov cl, 10
+
+	
+	WHILE val GT 0 
+	mov eax,0
+		mov al,val
+		mov bl,al
+		and bl,1
+	
+		
+		
+			.IF ( bl == num)
+				call WriteDec
+				mov al, ','
+				call WriteChar	
+				
+				.else
+				mov al,'x'
+					call WriteChar
+			mov al, ','
+			call WriteChar	
+
+			.ENDIF
+
+	val = val -1
+	ENDM
+	
+	
+call Crlf
+
+mov ecx,0
+mov eax,0
+mov ebx,0
+mov ecx,100
+call blah_bloo
+
+invoke ExitProcess, 0
+main endp
+;make functions proc implementations here...
+
+blah_bloo proc uses ecx
+
+cmp cx,999
+jge return_mama
+
+mov eax,0
+mov ebx,0
+mov edx,0
+	mov ax,cx
+	mov bx,10
+	div bx
+	mov dig1,dx
+mov eax,0
+mov ebx,0
+mov edx,0
+	mov ax,cx
+	mov bx,10
+	div bx
+	mov edx,0
+	mov bx,10
+	div bx
+	mov edx,0
+	mov bx,10
+	div bx
+	mov dig3,dx
+mov eax,0
+mov ebx,0
+mov edx,0
+	mov ax,cx
+	mov bx,10
+	div bx
+	mov edx,0
+	mov bx,10
+	div bx
+	MOV dig2,dx
+mov eax,0
+mov ebx,0
+mov edx,0
+mov dx,dig2
+mov ax,dig1
+add ax,dig3
+	cmp dx,ax
+	je print_num
+	jne move_on
+	jmp move_on
+
+print_num:
+	mov ax,cx
+	call WriteDec
+	mov eax,0
+	mov al,','
+	call WriteChar
+
+move_on:
+mov eax,0
+mov ebx,0
+mov edx,0
+mov dig1,0
+mov dig2,0
+inc ecx
+call blah_bloo
+	
+return_mama:
+ret
+blah_bloo endp
+
+end main
+
+
+

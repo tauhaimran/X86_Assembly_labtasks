@@ -1,0 +1,137 @@
+; Irvine Template - by Raggy Gaggy
+Include irvine32.inc
+include macros.inc
+
+.386
+.model flat, stdcall
+.stack 4096
+ExitProcess PROTO, dwExitCode:DWORD
+
+.data
+
+student STRUCT
+	id db 150 dup(0)
+	namex db 255 dup(0)
+	age db 0
+	grade db 0,0,0
+student ends
+
+stdx student <> 
+
+npc student < "id" , "name" , 18 , "Ax" >
+
+askid    db "q1.1) enter student id :",0
+askname  db "q1.2) enter student name:",0
+askgrade db "q1.2) enter student grade:",0
+askage  db "q1.2) enter student age:",0
+
+
+.code
+
+main proc
+
+mWrite "NPC : "
+mov edx, offset npc.id
+mov ecx,255
+call WriteString
+mWrite " | "
+mov edx, offset npc.namex
+mov ecx,255
+call WriteString
+mWrite " | "
+mov eax,0
+mov al,npc.age
+call WriteDec
+mWrite " | "
+mov edx, offset npc.grade
+mov ecx,0
+inc ecx
+call WriteString
+mWrite " ; "
+
+call Crlf
+
+
+call q1
+
+invoke ExitProcess, 0
+main endp
+;make functions proc implementations here...
+
+q1 proc
+ 
+mov eax,0
+mov edx, offset askid
+mov ecx,255
+call WriteString
+mov eax,0
+mov edx, offset stdx.id
+mov ecx,255
+call ReadString
+
+mov eax,0
+mov edx, offset askname
+mov ecx,255
+call WriteString
+mov edx, offset stdx.namex
+call ReadString
+
+mov eax,0
+mov edx, offset askage
+mov ecx,255
+call WriteString
+mov eax,0
+call Readint
+mov stdx.age , al
+
+mov eax,0
+mov edx, offset askgrade
+mov ecx,255
+call WriteString
+mov edx, offset stdx.grade
+call ReadString
+
+
+mov eax,0
+mov edx, offset askid
+add edx,12
+mov ecx,255
+call WriteString
+mov eax,0
+mov edx, offset stdx.id
+mov ecx,255
+call WriteString
+	call Crlf
+mov eax,0
+mov edx, offset askname
+add edx,12
+mov ecx,255
+call WriteString
+mov edx, offset stdx.namex
+call WriteString
+	call Crlf
+mov eax,0
+mov edx, offset askage
+add edx,12
+mov ecx,255
+call WriteString
+mov eax,0
+mov al,stdx.age
+call WriteDec
+	call Crlf
+mov eax,0
+mov edx, offset askgrade
+add edx,12
+mov ecx,255
+call WriteString
+mov edx, offset stdx.grade
+call WriteString
+	call Crlf
+ret
+q1 endp
+
+
+end main
+
+
+
